@@ -1,4 +1,3 @@
-#include <StandardCplusplus.h>
 #include <Arduino.h>
 #include <vector>
 #include <functional>
@@ -11,7 +10,7 @@ using namespace std;
 #include "display.h"
 #include "menu.h"
 #include "IR.h"
-//#include "type.h"
+#include "type.h"
 
 
 
@@ -20,12 +19,13 @@ void setup(){
   	Serial.begin(115200);
 	pinMode(ledPin, OUTPUT);
 
-  	fr.mcol("fr", 0);
+  	fr.name = "fr";
 
 	for(int i = 0; i < 4; i++){
 		pinMode(b_pins[i], INPUT);
 	}
 	
+	tp.typeInit();
 	initDisplay();
 	fr.initMenu();
 }
@@ -73,9 +73,6 @@ void loop() {
   	}
 
   if (pressed) {
-    Serial.print("Button ");
-    Serial.print(pressed_ind);
-    Serial.println(" pressed!");
     if(pressed_ind==0)up();
     if(pressed_ind==1)down();
     if(pressed_ind==2)left();

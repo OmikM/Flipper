@@ -12,15 +12,16 @@ public:
     String name;
     void (*func)() = nullptr;
 
+    int value; // used in IR
+
     String l1, l2;
 
     
     void initMenu();
 
-    void mcol(String n, void (*f)() = nullptr);
     void Print_out();
     void scroll(bool up);
-    void add(String n, void (*f)() = nullptr);
+    void add(String n, void (*f)() = nullptr, int v = 0);
     col *cur();
     void back();
     void next();

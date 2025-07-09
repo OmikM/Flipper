@@ -1,7 +1,7 @@
 #pragma once
 
-const int ledPin = 8;
-const int b_pins[4] = {2, 3, 4, 5};  // up, down, left, right
+const int ledPin = 4;
+const int b_pins[4] = {33, 25, 26, 27};  // up, down, left, right
 const unsigned long debounceDelay = 50;
 
 extern unsigned long lastDebounceTime;

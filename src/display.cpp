@@ -1,5 +1,7 @@
 #include "display.h"
 #include "menu.h"
+using namespace std;
+
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 

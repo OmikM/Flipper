@@ -3,3 +3,4 @@
 
 
 void add_ir();
+void send_IR();

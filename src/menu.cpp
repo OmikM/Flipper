@@ -1,6 +1,8 @@
 #include "menu.h"
 #include "display.h"
 #include <Arduino.h>
+using namespace std;
+
 #include "IR.h"
 
 col fr;
@@ -11,11 +13,6 @@ void col::initMenu(){
 	fr.cols[1].add("Add_IR", add_ir);
 	fr.cols[1].cols[0].add("Scanning ...");
 	fr.add("RF");
-}
-
-void col::mcol(String n, void (*f)()) {
-    name = n;
-    func = f;
 }
 
 void col::Print_out() {
@@ -32,9 +29,11 @@ void col::scroll(bool up) {
     pos = (cols.size() + pos + (up ? -1 : 1)) % cols.size();
 }
 
-void col::add(String n, void (*f)()) {
+void col::add(String n, void (*f)(), int v) {
     col temp;
-    temp.mcol(n, f);
+    temp.name = n;
+    temp.func = f;
+    temp.value = v;
     cols.push_back(temp);
 }
 
