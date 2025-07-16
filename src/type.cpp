@@ -22,6 +22,7 @@ void Type::typeInit(){
     cp(lets);
 }
 
+
 String Type::type(){
     String typed ="";
     short r = 0;
@@ -34,9 +35,9 @@ String Type::type(){
             disp[r][c] = '_';
         }else{
             Serial.print(is_lets);
-            if(is_lets){
-                cp(lets);
-            }
+            if(!is_lets)cp(big);
+            else if(is_big)cp(big);
+            else cp(lets);
         }
         Print(String(disp[0]), String(disp[1]));
         Serial.print(disp[0]);
@@ -45,7 +46,9 @@ String Type::type(){
         bool pressed;
 	    pressed = false;
 	    short pressed_ind = -1;
-  	    delay(600);
+  	    delay(200);
+
+        char ch;
 	
 	
 	    unsigned long time = millis();
@@ -79,29 +82,42 @@ String Type::type(){
         if(pressed_ind==0 or pressed_ind==1){
               if(r==1 and pressed_ind==0){
                 r--;
+                ch = disp[r][c];
             }else if(r==0 and pressed_ind==1){
                 r++;
+                ch = disp[r][c];
             }else{
                 //function buttons
                 if(c==8 and r==0){
                     typed.remove(typed.length()-1,1);
                 }
+
                 else if(c==7 and r==1){
-                if(is_lets)cp(nums);
-                else cp(lets);
-                is_lets = !is_lets;
+                    is_lets = !is_lets;
                 }
-            else if(c==8 and r==1)return typed;
-            else typed +=disp[r][c];
+
+                else if(c==6 and r==1){
+                    if(is_big)is_big=false;
+                    else is_big=true;
+                    is_lets = true;
+                }
+
+                else if(c==8 and r==1)return typed;
+
+                else{
+                    typed += ch;
+                }
         }
         }
         if(pressed_ind==2){
             if(c==0)c= 15;
             else c-=1;
+            ch = disp[r][c];
         }
         if(pressed_ind==3){
             if(c==15) c=0;
-        else c++;
-    }
+            else c++;
+            ch = disp[r][c];
+        }
   }  
 }

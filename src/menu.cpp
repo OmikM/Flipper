@@ -4,6 +4,7 @@
 using namespace std;
 
 #include "IR.h"
+#include "radio.h"
 
 col fr;
 
@@ -13,6 +14,10 @@ void col::initMenu(){
 	fr.cols[1].add("Add_IR", add_ir);
 	fr.cols[1].cols[0].add("Scanning ...");
 	fr.add("RF");
+    fr.cols[2].add("Custom");
+    fr.cols[2].cols[0].add("Add_RF", add_radio);
+    fr.cols[2].add("Dict");
+
 }
 
 void col::Print_out() {
