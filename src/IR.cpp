@@ -1,5 +1,7 @@
 
 using namespace std;
+#include <IRremoteESP8266.h>
+#include <IRsend.h>
 #include <Arduino.h>
 #include "menu.h"
 #include "hardware.h"
@@ -26,7 +28,7 @@ void add_ir(){
 		}
 	}
 
-	int IR = 10943;
+	int IR = 0x20DF10EF;
 	Print("Found IR", String(IR));
 	delay(3000);
 
@@ -43,6 +45,14 @@ void send_IR(){
 	Serial.print("Sending");
 	Serial.print(fr.cur()->name);
 	Serial.print(fr.cur()->value);
+
+
+	IRsend irsend(ir_emi_p);
+
+	irsend.begin();
+
+
+  	irsend.sendNEC(0x20DF10EF, 32);
 
 	delay(100);
 }

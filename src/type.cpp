@@ -12,7 +12,6 @@ Type tp;
 void Type::cp(const char a[2][17]){
   for(short i = 0; i < 2; i++){
     for(short j = 0; j < 17; j++){
-        Serial.print(a[i][j]);
         disp[i][j] = a[i][j];
     }
   }
@@ -34,14 +33,11 @@ String Type::type(){
         if(i%2){
             disp[r][c] = '_';
         }else{
-            Serial.print(is_lets);
             if(!is_lets)cp(big);
             else if(is_big)cp(big);
             else cp(lets);
         }
         Print(String(disp[0]), String(disp[1]));
-        Serial.print(disp[0]);
-        Serial.print(disp[1]);
 
         bool pressed;
 	    pressed = false;

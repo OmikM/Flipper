@@ -11,9 +11,10 @@ using namespace std;
 #include "menu.h"
 #include "IR.h"
 #include "type.h"
+#include "radio.h"
 
 
-
+#define on_off_switch_p  GPIO_NUM_32
 
 void setup(){
   	Serial.begin(115200);
@@ -24,7 +25,11 @@ void setup(){
 	for(int i = 0; i < 4; i++){
 		pinMode(b_pins[i], INPUT);
 	}
+
+	pinMode(on_off_switch_p, INPUT);
+	esp_err_t result = esp_sleep_enable_ext0_wakeup(on_off_switch_p, 1);
 	
+	radio_init();
 	tp.typeInit();
 	initDisplay();
 	fr.initMenu();
@@ -48,6 +53,8 @@ void right(){
 }
 
 bool pressed;
+bool on_off = 1; //1 = ON
+
 void loop() {
 	pressed = false;
 	int pressed_ind = -1;
@@ -56,6 +63,12 @@ void loop() {
   	fr.cur()->Print_out();
 	
 	unsigned long time = millis();
+	on_off = digitalRead(on_off_switch_p);
+
+	if(on_off == LOW){
+		Serial.println("off");
+		esp_light_sleep_start();
+	}
 
 	for(int i = 0; i < 4; i++){
 		curStates[i] = digitalRead(b_pins[i]);

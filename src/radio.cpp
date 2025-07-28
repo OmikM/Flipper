@@ -17,29 +17,30 @@ RCSwitch rf_emi = RCSwitch();
 
 
 void radio_init(){
-    rf_rec.enableReceive(radio_rec_p);
-    rf_emi.enableTransmit(radio_rec_p);
+    
+    rf_emi.enableTransmit(radio_emi_p);
 }
 
 void add_radio(){
+    rf_rec.enableReceive(radio_rec_p);
 	char text[13] = "Scanning";
     Print(text);
+    int value = 0;
+    if (rf_rec.available()) {
+        Serial.println("trying");
+        value = rf_rec.getReceivedValue();
 
-    int value = 12342;
-    // if (mySwitch.available()) {
-    //     value = mySwitch.getReceivedValue();
+        if (value == 0) {
+            Serial.println("Unknown encoding");
+        } else {
+            Serial.print("Received ");
+            Serial.print(value);
+            Serial.print(" / Bit length: ");
+            Serial.println(rf_rec.getReceivedBitlength());
+        }
 
-    //     if (value == 0) {
-    //         Serial.println("Unknown encoding");
-    //     } else {
-    //         Serial.print("Received ");
-    //         Serial.print(value);
-    //         Serial.print(" / Bit length: ");
-    //         Serial.println(mySwitch.getReceivedBitlength());
-    //     }
-
-    //     mySwitch.resetAvailable();
-    // }
+        rf_rec.resetAvailable();
+    }
 	Print("Found Radio", String(value));
 	delay(3000);
 
