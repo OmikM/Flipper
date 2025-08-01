@@ -12,6 +12,8 @@ using namespace std;
 #include "IR.h"
 #include "type.h"
 #include "radio.h"
+#include "rfid.h"
+
 
 
 #define on_off_switch_p  GPIO_NUM_32
@@ -29,6 +31,7 @@ void setup(){
 	pinMode(on_off_switch_p, INPUT);
 	esp_err_t result = esp_sleep_enable_ext0_wakeup(on_off_switch_p, 1);
 	
+	init_RFID();
 	radio_init();
 	tp.typeInit();
 	initDisplay();

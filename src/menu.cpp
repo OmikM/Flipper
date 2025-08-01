@@ -5,6 +5,7 @@ using namespace std;
 
 #include "IR.h"
 #include "radio.h"
+#include "rfid.h"
 
 col fr;
 
@@ -17,6 +18,8 @@ void col::initMenu(){
     fr.cols[2].add("Custom");
     fr.cols[2].cols[0].add("Add_RF", add_radio);
     fr.cols[2].add("Dict");
+
+    fr.cols[0].add("Read", read_RFID);
 
 }
 
