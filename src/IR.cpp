@@ -2,12 +2,17 @@
 using namespace std;
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
+#include <IRrecv.h>
 #include <Arduino.h>
 #include "menu.h"
 #include "hardware.h"
 #include "display.h"
 #include "IR.h"
 #include "type.h"
+
+IRrecv receiver(ir_rec_p);
+decode_results res;
+
 
 extern col fr;
 
@@ -16,19 +21,29 @@ extern Type tp;
 
 
 void add_ir(){
-	for(int j = 0; j < 2; j++){
-	char text[13] = "Scanning";
-		for(int i =0; i < 4; i++){
-			text [8+i] = '.';
+	char text[13] = "Scanning    ";
+	receiver.enableIRIn();
+	int IR;
+	for(int i = 0; i < 64; i++){
+		
+		if(receiver.decode(&res)){
+	        IR = res.value, HEX;
+        	receiver.resume();
+			break;
+    	}
+		if(i%16==0)
+		{
+			char text[13] = "Scanning    ";
 			Print(text);
-			digitalWrite(ledPin, HIGH);
-			delay(50);
-			digitalWrite(ledPin, LOW);
-			delay(50);
-		}
+		}else if(i%4==0){
+			text[7+((i%16)/4)] = '.';
+			Serial.println(text);
+			Print(text);
+		}	
+		delay(100);
+
 	}
 
-	int IR = 0x20DF10EF;
 	Print("Found IR", String(IR));
 	delay(3000);
 
@@ -51,8 +66,8 @@ void send_IR(){
 
 	irsend.begin();
 
-
-  	irsend.sendNEC(0x20DF10EF, 32);
-
-	delay(100);
+	for(int i = 0; i < 6; i++){
+  		irsend.sendNEC(fr.cur()->value, 32);
+		delay(50);
+	}
 }

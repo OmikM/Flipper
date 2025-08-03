@@ -6,7 +6,7 @@ const int b_pins[4] = {33, 25, 26, 27};  // up, down, left, right
 const unsigned long debounceDelay = 50;
 const int radio_rec_p = 5;
 const int radio_emi_p = 12;
-//const int ir_rec_p = ;
+const int ir_rec_p = 14;
 const int ir_emi_p = 2;
 
 const int rfid_rst = 13;
