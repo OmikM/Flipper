@@ -1,7 +1,7 @@
 #pragma once
 
 const int ledPin = 4;
-const int b_pins[4] = {33, 25, 26, 27};  // up, down, left, right
+const int b_pins[4] = {36, 39, 34, 35};  // up, down, left, right
 //const int on_off_switch_p = 32;
 const unsigned long debounceDelay = 50;
 const int radio_rec_p = 5;
@@ -11,6 +11,8 @@ const int ir_emi_p = 2;
 
 const int rfid_rst = 13;
 const int rfid_sda = 12;
+
+const int SD_cs_p = 26;
 
 
 

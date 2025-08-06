@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <unistd.h>
+#include <SD.h>
 using namespace std;
 #include "hardware.h"
 #include "display.h"
@@ -13,6 +14,8 @@ using namespace std;
 #include "type.h"
 #include "radio.h"
 #include "rfid.h"
+#include "micro_sd.h"
+
 
 
 

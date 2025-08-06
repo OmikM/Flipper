@@ -4,11 +4,13 @@ using namespace std;
 #include <IRsend.h>
 #include <IRrecv.h>
 #include <Arduino.h>
+#include <SD.h>
 #include "menu.h"
 #include "hardware.h"
 #include "display.h"
 #include "IR.h"
 #include "type.h"
+#include "micro_sd.h"
 
 IRrecv receiver(ir_rec_p);
 decode_results res;
@@ -41,11 +43,12 @@ void add_ir(){
 			Print(text);
 		}	
 		delay(100);
-
 	}
 
 	Print("Found IR", String(IR));
+	writeFile(SD, "/hello.txt", "Hello ");
 	delay(3000);
+	readFile(SD, "/hello.txt");
 
 	String name = tp.type();
 	if(name.length()<=0 and name.length()>=16){
