@@ -35,20 +35,21 @@ void add_ir(){
     	}
 		if(i%16==0)
 		{
-			char text[13] = "Scanning    ";
+			char texct[13] = "Scanning    ";
 			Print(text);
 		}else if(i%4==0){
 			text[7+((i%16)/4)] = '.';
 			Serial.println(text);
 			Print(text);
 		}	
-		delay(100);
+		delay(50);
 	}
 
 	Print("Found IR", String(IR));
 	writeFile(SD, "/hello.txt", "Hello ");
-	delay(3000);
-	readFile(SD, "/hello.txt");
+	delay(1000);
+	Serial.println(listDir(SD, "/", 0)[0]);
+	Serial.println(readFile(SD, "/hello.txt")[0]);
 
 	String name = tp.type();
 	if(name.length()<=0 and name.length()>=16){
