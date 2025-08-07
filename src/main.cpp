@@ -25,7 +25,6 @@ void setup(){
   	Serial.begin(115200);
 	pinMode(ledPin, OUTPUT);
 
-  	fr.name = "fr";
 
 	for(int i = 0; i < 4; i++){
 		pinMode(b_pins[i], INPUT);
@@ -38,35 +37,38 @@ void setup(){
 	radio_init();
 	tp.typeInit();
 	initDisplay();
-	fr.initMenu();
+	
+	SD.begin(SD_cs_p);
+	M.dir = listDir(SD, M.path.c_str(), 0);
 }
 
 void up(){
-	fr.cur()->scroll(1);
+	M.scroll(1);
 	Serial.println('u');
 }
 void down(){
-	fr.cur()->scroll(0);
+	M.scroll(0);
   	Serial.println('d');
 }
 void left(){
-	fr.back();
+	M.back();
 	Serial.println('l');
 }
 void right(){
+	M.next();
   	Serial.println('r');
-	fr.cur()->next();
 }
 
 bool pressed;
 bool on_off = 1; //1 = ON
+
 
 void loop() {
 	pressed = false;
 	int pressed_ind = -1;
   	delay(200);
 	
-  	fr.cur()->Print_out();
+  	M.Print_out();
 	
 	unsigned long time = millis();
 	on_off = digitalRead(on_off_switch_p);

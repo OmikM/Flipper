@@ -16,7 +16,7 @@ IRrecv receiver(ir_rec_p);
 decode_results res;
 
 
-extern col fr;
+//extern col fr;
 
 
 extern Type tp;
@@ -26,9 +26,11 @@ void add_ir(){
 	char text[13] = "Scanning    ";
 	receiver.enableIRIn();
 	int IR;
+	String prot;
 	for(int i = 0; i < 64; i++){
 		
 		if(receiver.decode(&res)){
+			String prot = String(res.decode_type);
 	        IR = res.value, HEX;
         	receiver.resume();
 			break;
@@ -46,32 +48,31 @@ void add_ir(){
 	}
 
 	Print("Found IR", String(IR));
-	writeFile(SD, "/hello.txt", "Hello ");
-	delay(1000);
-	Serial.println(listDir(SD, "/", 0)[0]);
-	Serial.println(readFile(SD, "/hello.txt")[0]);
+
+	
 
 	String name = tp.type();
 	if(name.length()<=0 and name.length()>=16){
 		return;
 	}
-	fr.back();
-	Serial.print(fr.cur()->name);
-	fr.cur()->add(name,send_IR, IR);
+
+	String content = String("4\n")+ IR + '\n' + prot;
+	Serial.println("\n"+prot);
+	writeFile(SD, (M.path + '/' + name + ".txt").c_str() , content.c_str());
 }
 
 void send_IR(){
 	Serial.print("Sending");
-	Serial.print(fr.cur()->name);
-	Serial.print(fr.cur()->value);
-
 
 	IRsend irsend(ir_emi_p);
 
 	irsend.begin();
 
+	String prot = readFile(SD, (M.path + "/" + M.dir[M.pos] + ".txt").c_str())[2];
+	int val = readFile(SD, (M.path + "/" + M.dir[M.pos] + ".txt").c_str())[1].toInt();
+
 	for(int i = 0; i < 6; i++){
-  		irsend.sendNEC(fr.cur()->value, 32);
+		if(prot=="NEC") irsend.sendNEC(val, 32);
 		delay(50);
 	}
 }

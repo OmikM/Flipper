@@ -10,7 +10,6 @@ using namespace std;
 
 
 void writeFile(fs::FS &fs, const char * path, const char * message){
-  SD.begin(SD_cs_p);
 
   Serial.printf("Writing file: %s\n", path);
 
@@ -32,15 +31,12 @@ vector<String> readFile(fs::FS &fs, const char * path){
   vector<String> res;
   String word = ""; 
 
-  Serial.printf("Reading file: %s\n", path);
 
   File file = fs.open(path);
   if(!file){
-    Serial.println("Failed to open file for reading");
     return res;
   }
 
-  Serial.print("Read from file: ");
   
   while(file.available()){
     char c = file.read();
@@ -59,7 +55,7 @@ vector<String> readFile(fs::FS &fs, const char * path){
 
 vector<String> listDir(fs::FS &fs, const char * dirname, uint8_t levels = 0){
   vector<String> res;
-  Serial.printf("Listing directory: %s\n", dirname);
+  
 
   File root = fs.open(dirname);
   if(!root){
@@ -74,18 +70,12 @@ vector<String> listDir(fs::FS &fs, const char * dirname, uint8_t levels = 0){
   File file = root.openNextFile();
   while(file){
     if(file.isDirectory()){
-      Serial.print("  DIR : ");
-      Serial.println(file.name());
       res.push_back(file.name());
       if(levels){
         listDir(fs, file.name(), levels -1);
       }
     } else {
-      Serial.print("  FILE: ");
       res.push_back(file.name());
-      Serial.print(file.name());
-      Serial.print("  SIZE: ");
-      Serial.println(file.size());
     }
     file = root.openNextFile();
   }
@@ -99,6 +89,11 @@ void createDir(fs::FS &fs, const char * path){
   } else {
     Serial.println("mkdir failed");
   }
+}
+
+bool is_dir(fs::FS &fs, const char * dirname){
+  File file = fs.open(dirname);
+  return file.isDirectory();
 }
 
 void removeDir(fs::FS &fs, const char * path){

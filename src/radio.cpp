@@ -1,14 +1,18 @@
 
 using namespace std;
 #include <Arduino.h>
+#include <RCSwitch.h>
+#include <SD.h>
 #include "menu.h"
 #include "hardware.h"
 #include "display.h"
 #include "radio.h"
 #include "type.h"
-#include <RCSwitch.h>
+#include "micro_sd.h"
 
-extern col fr;
+
+
+
 extern Type tp;
 
 RCSwitch rf_rec = RCSwitch();
@@ -48,17 +52,15 @@ void add_radio(){
 	if(name.length()<=0 and name.length()>=16){
 		return;
 	}
-	Serial.print(fr.cur()->name);
-	fr.cur()->add(name,send_radio, value);
+
+    writeFile(SD, (M.path + '/' + name + ".txt").c_str() , String("5\n"+ value).c_str());
 }
 
 void send_radio(){
-    fr.cur()->next();
-    rf_emi.send(fr.cur()->value, 24);
-    Serial.println("Sent: " + fr.cur()->name + fr.cur()->value);
 
-
-    fr.cur()->back();
+    
+	int val = readFile(SD, (M.path + "/" + M.dir[M.pos] + ".txt").c_str())[1].toInt();
+    rf_emi.send(val, 24);
 
 	delay(100);
 }

@@ -3,9 +3,12 @@
 #include <vector>
 #include <String>
 #include <functional>
+using namespace std;
 
 class col {
 public:
+    String path = "/M";
+    vector<String> dir;
     int is_in = false;
     int pos = 0;
     std::vector<col> cols;
@@ -14,16 +17,15 @@ public:
 
     int value; // used in IR
 
-    String l1, l2;
 
     
     void initMenu();
 
-    void Print_out();
     void scroll(bool up);
     void add(String n, void (*f)() = nullptr, int v = 0);
-    col *cur();
+    void Print_out();
+
     void back();
     void next();
 };
-extern col fr;
+extern col M;
