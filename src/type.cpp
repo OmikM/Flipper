@@ -64,11 +64,6 @@ String Type::type(){
     	    }
   	    }
 
-        if (pressed) {
-            Serial.print("Button ");
-            Serial.print(pressed_ind);
-            Serial.println(" pressed!");
-        }
 
         for (short i = 0; i < 4; i++) {
             lastStates[i] = curStates[i];

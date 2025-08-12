@@ -8,9 +8,12 @@ using namespace std;
 #include "radio.h"
 #include "rfid.h"
 #include "micro_sd.h"
+#include "IR_send.h"
+
 
 
 col M;
+
 
 void funct_wrapper(int f_id){
     if(f_id==1) add_ir();
@@ -18,6 +21,12 @@ void funct_wrapper(int f_id){
     if(f_id==3) add_radio(); 
     if(f_id==4) send_IR();
     if(f_id==5) send_radio();
+    if(f_id==6){
+        Serial.println(M.del_file);
+        M.del_file = !M.del_file;
+        Serial.println(M.del_file);
+        Serial.println("KKKKKKKKKKKKKKKKKKK");
+    }
 
 }
 
@@ -48,7 +57,6 @@ void col::add(String n, void (*f)(), int v) {
 
 
 void col::back() {
-    Serial.println(path);
     if(path == "/M") return;
     int i;
     for(i = path.length()-1; i > 0; i--){
@@ -60,8 +68,7 @@ void col::back() {
     String temp = path.substring(i+1, path.length());    
     path = path.substring(0, i);
     dir = listDir(SD, path.c_str(), 0);
-    Serial.println(path);
-    Serial.println(temp);
+
 
     for(pos = 0; pos < 1000; pos++){
         if(dir[pos]== temp) break;
@@ -70,14 +77,22 @@ void col::back() {
 
 void col::next() {
     String f = path + '/' + dir[pos] ;
+    int func_id;
+    Serial.println(del_file);
     if (is_dir(SD,f.c_str())){
         pos = 0;
         path = f;
-        dir = listDir(SD, path.c_str(), 0);
-        
     }else{
-        int func_id = readFile(SD, f.c_str())[0].toInt();
+        func_id = readFile(SD, f.c_str())[0].toInt();
+
+        if (del_file and func_id!=6){
+            deleteFile(SD, f.c_str());
+            del_file = false;
+            dir = listDir(SD, path.c_str(), 0);
+            return;
+        }
+
         funct_wrapper(func_id);
     }
-    Serial.println(path);
+    dir = listDir(SD, path.c_str(), 0);
 }

@@ -15,6 +15,8 @@ public:
     String name;
     void (*func)() = nullptr;
 
+    bool del_file = 0;
+
     int value; // used in IR
 
 
