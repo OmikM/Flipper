@@ -46,9 +46,9 @@ void add_ir(){
 	int IR;
 	int msg_s;
 	int adr = 0;
-	String prot;
+	String prot = "-1";
 	String IR_raw;
-	for(int i = 0; i < 64; i++){
+	for(int i = 0; i < 96; i++){
 		
 		if(receiver.decode(&res)){
 			prot = String(res.decode_type);
@@ -67,6 +67,8 @@ void add_ir(){
 
 			
 			Serial.println(res.bits);
+			Print("Found");
+			delay(1000);
         	receiver.resume();
 			break;
     	}
@@ -77,8 +79,13 @@ void add_ir(){
 			text[7+((i%16)/4)] = '.';
 			Serial.println(text);
 			Print(text);
-		}	
+		}
 		delay(50);
+	}
+	if(prot == "-1"){
+		Print("Not Found");
+		delay(1000);
+		return;
 	}
 
 	Print("Found IR", String(IR));

@@ -5,4 +5,5 @@
 extern LiquidCrystal_I2C lcd;
 
 void initDisplay();
-void Print(String l1, String l2 = "");
+void Print(String l1, String l2 = "", bool row = false);
+

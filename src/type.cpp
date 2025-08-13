@@ -9,6 +9,8 @@ Type tp;
 //extern Type tp;
 
 
+
+
 void Type::cp(const char a[2][17]){
   for(short i = 0; i < 2; i++){
     for(short j = 0; j < 17; j++){
@@ -33,7 +35,7 @@ String Type::type(){
         if(i%2){
             disp[r][c] = '_';
         }else{
-            if(!is_lets)cp(big);
+            if(!is_lets)cp(nums);
             else if(is_big)cp(big);
             else cp(lets);
         }
