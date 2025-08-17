@@ -1,51 +1,50 @@
 using namespace std;
 #include <Arduino.h>
+#include <SPI.h>
+#include <SD.h>
+#include <MFRC522.h>
+
 #include "menu.h"
 #include "hardware.h"
 #include "display.h"
 #include "rfid.h"
 #include "type.h"
-#include <SPI.h>
-#include <MFRC522.h>
+#include "micro_sd.h"
 
 
-MFRC522 mfrc522(rfid_sda, rfid_rst);
-
-byte buffer[18];
-byte block;
-byte waarde[64][16];
-MFRC522::StatusCode status;
-    
-MFRC522::MIFARE_Key key;
-
-// Number of known default keys (hard-coded)
-// NOTE: Synchronize the NR_KNOWN_KEYS define with the defaultKeys[] array
-#define NR_KNOWN_KEYS   8
 // Known keys, see: https://code.google.com/p/mfcuk/wiki/MifareClassicDefaultKeys
-byte knownKeys[NR_KNOWN_KEYS][MFRC522::MF_KEY_SIZE] =  {
-    {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}, // FF FF FF FF FF FF = factory default
-    {0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5}, // A0 A1 A2 A3 A4 A5
-    {0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5}, // B0 B1 B2 B3 B4 B5
-    {0x4d, 0x3a, 0x99, 0xc3, 0x51, 0xdd}, // 4D 3A 99 C3 51 DD
-    {0x1a, 0x98, 0x2c, 0x7e, 0x45, 0x9a}, // 1A 98 2C 7E 45 9A
-    {0xd3, 0xf7, 0xd3, 0xf7, 0xd3, 0xf7}, // D3 F7 D3 F7 D3 F7
-    {0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff}, // AA BB CC DD EE FF
-    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}  // 00 00 00 00 00 00
+
+NFC N(rfid_cs, rfid_rst);
+
+const byte NFC::knownKeys[8][MFRC522::MF_KEY_SIZE] = {
+    {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
+    {0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5},
+    {0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5},
+    {0x4d, 0x3a, 0x99, 0xc3, 0x51, 0xdd},
+    {0x1a, 0x98, 0x2c, 0x7e, 0x45, 0x9a},
+    {0xd3, 0xf7, 0xd3, 0xf7, 0xd3, 0xf7},
+    {0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff},
+    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 };
 
-char choice;
 
-
-void init_RFID(){
-    Serial.print("initialized");
-    SPI.begin();
+void NFC::init_RFID(){
+    toggle_cs(0);
     mfrc522.PCD_Init();
+
+
+    Serial.print("initialized");
+
     for (byte i = 0; i < 6; i++) {
         key.keyByte[i] = 0xFF;
     }
+
 }
 
-void read_RFID(){
+void NFC::read_RFID(){
+
+    toggle_cs(0);
+
 
     Serial.print("Reading ...");
     while (true){
@@ -55,10 +54,11 @@ void read_RFID(){
         Serial.print("Detected");
         
         if (mfrc522.PICC_ReadCardSerial()) {
+
             break;
         }
         delay(50);
-      }
+    }
 
     Serial.print("Card UID: ");
     for (byte i = 0; i < mfrc522.uid.size; i++) {
@@ -79,43 +79,65 @@ void read_RFID(){
         }
         // Try the key
         if (try_key(&key)) {
+            Serial.println("ssssssssssuKCES");
             // Found and reported on the key and block,
             // no need to try other keys for this PICC
             break;
         }
     }
 
+    M.dir = listDir(SD, M.path.c_str(), 0);
+
 
     mfrc522.PICC_HaltA();
     mfrc522.PCD_StopCrypto1();
+    toggle_cs(1);
 }
     
 
-//  //Via seriele monitor de bytes uitlezen in hexadecimaal
  
 void dump_byte_array(byte *buffer, byte bufferSize) {
+    Serial.print("SSSSSSSSSSSsssigma");
     for (byte i = 0; i < bufferSize; i++) {
         Serial.print(buffer[i] < 0x10 ? " 0" : " ");
         Serial.print(buffer[i], HEX);
     }
-}
-//Via seriele monitor de bytes uitlezen in ASCI
-
-void dump_byte_array1(byte *buffer, byte bufferSize) {
-  for (byte i = 0; i < bufferSize; i++) {
-    Serial.print(buffer[i] < 0x10 ? " 0" : " ");
-    Serial.write(buffer[i]);
-  }
+    Serial.print("SSSSSSSSSSSsssigma");
 }
 
-// /*
-//  * Try using the PICC (the tag/card) with the given key to access block 0 to 63.
-//  * On success, it will show the key details, and dump the block data on Serial.
-//  *
-//  * @return true when the given key worked, false otherwise.
-//  */
+
+void NFC::setup_sectors() {
+    M.path = (M.path + "/temp");
+    createDir(SD, M.path.c_str());
+    M.pos = 0;
+    
+    for(int sect = 0; sect < 4; sect++){
+        String sec_path = M.path + "/Sector_" + String(sect+1);
+        createDir(SD, sec_path.c_str());
+
+        for(int i = 0; i < 16; i++){
+            String block_path = sec_path + "/";
+            for(int j = 0; j < 16; j++){
+                if(waarde[(sect*16)+i][j]==0){block_path += '_';}
+                else if(waarde[(sect*16)+i][j]>=33 and waarde[(sect*16)+i][j]<=126){
+                    block_path += char(waarde[(sect*16)+i][j]);
+                }else{
+                    block_path += '?';
+                }
+            }
+            block_path = block_path+String((sect*16)+i)+".txt";
+            Serial.print(block_path);
+            writeFile(SD, (block_path+".txt").c_str() , "7");
+        }
+    }
+
+    M.dir = listDir(SD, M.path.c_str(), 0);
+
+}
+
+
  
-bool try_key(MFRC522::MIFARE_Key *key)
+bool NFC::try_key(MFRC522::MIFARE_Key *key)
 {
     bool result = false;
     
@@ -138,15 +160,14 @@ bool try_key(MFRC522::MIFARE_Key *key)
     }
     else {
         // Successful read
-        result = true;
         Serial.print(F("Success with key:"));
         dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
         Serial.println();
         
         // Dump block data
         Serial.print(F("Block ")); Serial.print(block); Serial.print(F(":"));
-        dump_byte_array1(buffer, 16); //omzetten van hex naar ASCI
         Serial.println();
+
         
         for (int p = 0; p < 16; p++) //De 16 bits uit de block uitlezen
         {
@@ -154,9 +175,11 @@ bool try_key(MFRC522::MIFARE_Key *key)
           Serial.print(waarde[block][p]);
           Serial.print(" ");
         }
-        
         }
+        result = true;
     }
+    setup_sectors();
+    
    
     mfrc522.PICC_HaltA();       // Halt PICC
     mfrc522.PCD_StopCrypto1();  // Stop encryption on PCD

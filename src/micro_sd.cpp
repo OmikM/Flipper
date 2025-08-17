@@ -70,7 +70,14 @@ vector<String> listDir(fs::FS &fs, const char * dirname, uint8_t levels = 0){
   File file = root.openNextFile();
   while(file){
     if(file.isDirectory()){
-      res.push_back(file.name());
+      String name = file.name();
+      Serial.println(name.substring(name.length() - 4));
+      if(name.substring(name.length() - 4)==String("temp")){
+        Serial.print("___" + String(file.name()));
+        removeDir(SD, (dirname+String("/temp")).c_str());
+      }
+
+      res.push_back(name);
       if(levels){
         listDir(fs, file.name(), levels -1);
       }
@@ -81,6 +88,35 @@ vector<String> listDir(fs::FS &fs, const char * dirname, uint8_t levels = 0){
   }
   return res;
 }
+
+
+void removeDir(fs::FS &fs, const char * path){
+  Serial.println(path);
+  File root = fs.open(path);
+
+  Serial.printf("Removing Dir: %s\n", path);
+  File file = root.openNextFile();
+    while (file) {
+        String filePath = String(path) + '/' + String(file.name());
+        if (file.isDirectory()) {
+          removeDir(fs, filePath.c_str());
+        } else {
+            // Delete file
+            if (!fs.remove(filePath)) {
+                Serial.println(filePath);
+                Serial.printf("Failed to remove file: %s\n", filePath.c_str());
+            }
+        }
+        file = root.openNextFile();
+    }
+
+    // Finally, remove the empty folder
+    if (!fs.rmdir(path)) {
+        Serial.printf("Failed to remove directory: %s\n", path);
+    }
+}
+
+
 
 void createDir(fs::FS &fs, const char * path){
   Serial.printf("Creating Dir: %s\n", path);
@@ -96,14 +132,6 @@ bool is_dir(fs::FS &fs, const char * dirname){
   return file.isDirectory();
 }
 
-void removeDir(fs::FS &fs, const char * path){
-  Serial.printf("Removing Dir: %s\n", path);
-  if(fs.rmdir(path)){
-    Serial.println("Dir removed");
-  } else {
-    Serial.println("rmdir failed");
-  }
-}
 
 
 void appendFile(fs::FS &fs, const char * path, const char * message){
