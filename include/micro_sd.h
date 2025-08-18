@@ -11,3 +11,4 @@ bool is_dir(fs::FS &fs, const char * dirname);
 void deleteFile(fs::FS &fs, const char * path);
 void createDir(fs::FS &fs, const char * path);
 void removeDir(fs::FS &fs, const char * path);
+void renameFile(fs::FS &fs, const char * path1, const char * path2);

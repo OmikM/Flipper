@@ -17,15 +17,15 @@ col M;
 
 void funct_wrapper(int f_id){
     if(f_id==1) add_ir();
-    if(f_id==2) N.read_RFID(); 
+    if(f_id==2) N.read_RFID();
     if(f_id==3) add_radio(); 
     if(f_id==4) send_IR();
     if(f_id==5) send_radio();
     if(f_id==6){
-        Serial.println(M.del_file);
         M.del_file = !M.del_file;
         Serial.println(M.del_file);
     }
+    if(f_id==7) N.write_rfid();
 
 }
 
@@ -77,7 +77,6 @@ void col::back() {
 void col::next() {
     String f = path + '/' + dir[pos];
     int func_id;
-    Serial.println(del_file);
     if (is_dir(SD,f.c_str())){
         pos = 0;
         path = f;

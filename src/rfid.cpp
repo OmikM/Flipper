@@ -79,7 +79,6 @@ void NFC::read_RFID(){
         }
         // Try the key
         if (try_key(&key)) {
-            Serial.println("ssssssssssuKCES");
             // Found and reported on the key and block,
             // no need to try other keys for this PICC
             break;
@@ -97,12 +96,10 @@ void NFC::read_RFID(){
 
  
 void dump_byte_array(byte *buffer, byte bufferSize) {
-    Serial.print("SSSSSSSSSSSsssigma");
     for (byte i = 0; i < bufferSize; i++) {
         Serial.print(buffer[i] < 0x10 ? " 0" : " ");
         Serial.print(buffer[i], HEX);
     }
-    Serial.print("SSSSSSSSSSSsssigma");
 }
 
 
@@ -110,24 +107,38 @@ void NFC::setup_sectors() {
     M.path = (M.path + "/temp");
     createDir(SD, M.path.c_str());
     M.pos = 0;
+    String block_path;
+    String num;
+    String sec_path;
+    String sec_r_path;
     
-    for(int sect = 0; sect < 4; sect++){
-        String sec_path = M.path + "/Sector_" + String(sect+1);
-        createDir(SD, sec_path.c_str());
+    for(int sect_r = 0; sect_r < 4; sect_r++){
+        sec_r_path = M.path + "/Sectors_" + String((sect_r*4)) + "-" + String((sect_r*4+3));
+        createDir(SD, sec_r_path.c_str());
 
-        for(int i = 0; i < 16; i++){
-            String block_path = sec_path + "/";
-            for(int j = 0; j < 16; j++){
-                if(waarde[(sect*16)+i][j]==0){block_path += '_';}
-                else if(waarde[(sect*16)+i][j]>=33 and waarde[(sect*16)+i][j]<=126){
-                    block_path += char(waarde[(sect*16)+i][j]);
-                }else{
-                    block_path += '?';
+        for(int sect = sect_r*4; sect<(sect_r*4)+4; sect++){
+            sec_path = sec_r_path + "/Sector_" + String(sect);
+            //Serial.println(sec_path);
+            createDir(SD, sec_path.c_str());
+
+            for(int i = 0; i < 4; i++){
+                num = "0";
+                if((sect*4)+i>=10)num += String((sect*4)+i);
+                else num += '0'+String((sect*4)+i);
+
+                block_path = sec_path + "/" + num + '_';
+
+                for(int j = 0; j < 16; j++){
+                    if(waarde[(sect*4)+i][j]==0){block_path += '_';}
+                    else if(waarde[(sect*4)+i][j]>=33 and waarde[(sect*4)+i][j]<=126){
+                        block_path += char(waarde[(sect*4)+i][j]);
+                    }else{
+                        block_path += '#';
+                    }
                 }
+            
+                writeFile(SD, (block_path+".txt").c_str() , "7");
             }
-            block_path = block_path+String((sect*16)+i)+".txt";
-            Serial.print(block_path);
-            writeFile(SD, (block_path+".txt").c_str() , "7");
         }
     }
 
@@ -143,11 +154,9 @@ bool NFC::try_key(MFRC522::MIFARE_Key *key)
     
     for(byte block = 0; block < 64; block++){
       
-    Serial.println(F("Authenticating using key A..."));
     status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, key, &(mfrc522.uid));
     if (status != MFRC522::STATUS_OK) {
-        Serial.print(F("PCD_Authenticate() failed: "));
-        Serial.println(mfrc522.GetStatusCodeName(status));
+
         return false;
     }
 
@@ -160,9 +169,9 @@ bool NFC::try_key(MFRC522::MIFARE_Key *key)
     }
     else {
         // Successful read
-        Serial.print(F("Success with key:"));
-        dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
-        Serial.println();
+        // Serial.print(F("Success with key:"));
+        // //dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
+        // Serial.println();
         
         // Dump block data
         Serial.print(F("Block ")); Serial.print(block); Serial.print(F(":"));

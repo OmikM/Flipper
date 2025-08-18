@@ -72,7 +72,13 @@ void initDisplay() {
     lcd.createChar(2, big);
     lcd.createChar(3, small);
     lcd.createChar(4, del);
+}
 
+String nopref(String s){
+    if(isDigit(s[0])){
+        return s.substring(4);
+    }
+    return s;
 }
 
 void Print(String l1, String l2, bool row) {
@@ -82,6 +88,8 @@ void Print(String l1, String l2, bool row) {
     }else{
         lcd.clear();
     }
+
+    l1 = nopref(l1);
 
     lcd.setCursor(0, row);
     for (int i = 0; i < l1.length(); i++) {

@@ -14,6 +14,8 @@ private:
     MFRC522::StatusCode status;
     char choice;
     void setup_sectors();
+    void error(String msg);
+    bool write(MFRC522::MIFARE_Key *key, String name, byte dataBlock[16], int blockAddr);
     
     MFRC522::MIFARE_Key key;
 public:
@@ -28,5 +30,8 @@ public:
 
     void start();
     bool try_key(MFRC522::MIFARE_Key *key);
+
+
+    void write_rfid();
 };
 extern NFC N;
