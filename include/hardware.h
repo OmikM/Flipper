@@ -1,6 +1,8 @@
 #pragma once
 
 void toggle_cs(bool is_SD);
+int buttons();
+
 
 const int ledPin = 4;
 const int b_pins[4] = {36, 39, 34, 35};  // up, down, left, right
@@ -26,4 +28,8 @@ extern unsigned long lastDebounceTime;
 extern bool lastStates[4];
 extern bool curStates[4];
 extern char push;
+extern bool presed;
 
+
+extern bool on_off;
+const gpio_num_t on_off_switch_p = GPIO_NUM_32;

@@ -32,7 +32,7 @@ void funct_wrapper(int f_id){
 
 void col::Print_out() {
     String l1, l2;
-    dir = listDir(SD, path.c_str(), 0);
+    // dir = listDir(SD, path.c_str(), 0);
     if (dir.size() > 0) {
         l1 = dir[pos];
     }

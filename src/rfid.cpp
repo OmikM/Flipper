@@ -48,6 +48,9 @@ void NFC::read_RFID(){
 
     Serial.print("Reading ...");
     while (true){
+        if(buttons()==2){
+			return;
+		}
         if (!mfrc522.PICC_IsNewCardPresent()) {
             continue;
         }

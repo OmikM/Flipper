@@ -72,6 +72,10 @@ void NFC::write_rfid(){
 
     Serial.print("Writing ...");
     while (true){
+        if(buttons()==2){
+            M.dir = listDir(SD, M.path.c_str(), 0);
+			return;
+		}
         if (!mfrc522.PICC_IsNewCardPresent()) {
             continue;
         }

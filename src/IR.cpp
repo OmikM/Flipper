@@ -48,8 +48,13 @@ void add_ir(){
 	int adr = 0;
 	String prot = "-1";
 	String IR_raw;
-	for(int i = 0; i < 96; i++){
-		
+	for(int i = 0; i < 240; i++){
+		if(buttons()==2){
+			M.dir = listDir(SD, M.path.c_str(), 0);
+			return;
+		}
+
+
 		if(receiver.decode(&res)){
 			prot = String(res.decode_type);
 			Serial.println(res.decode_type);
@@ -80,7 +85,6 @@ void add_ir(){
 			Serial.println(text);
 			Print(text);
 		}
-		delay(50);
 	}
 	if(prot == "-1"){
 		Print("Not Found");

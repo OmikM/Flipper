@@ -10,6 +10,15 @@ Type tp;
 
 
 
+char char_to_hex(char lt1) {
+    if(lt1 <= '9'){
+        return lt1 - '0';
+    }
+    if (lt1 >= 'a' and lt1 <= 'z') {
+        lt1 -= 32;
+    }
+    return lt1 - 'A' + 10;
+}
 
 void Type::cp(const char a[2][17]){
   for(short i = 0; i < 2; i++){
@@ -30,8 +39,12 @@ String Type::type(){
     short c = 8;
     int i =0;
     bool is_lets = 1;
+    char ch;
+    short pressed_ind = -1;
+
     while (true){
         i++;
+        
         if(i%2){
             disp[r][c] = '_';
         }else{
@@ -41,36 +54,9 @@ String Type::type(){
         }
         Print(String(disp[0]), String(disp[1]));
 
-        bool pressed;
-	    pressed = false;
-	    short pressed_ind = -1;
-  	    delay(200);
+        
 
-        char ch;
-	
-	
-	    unsigned long time = millis();
-
-	    for(short i = 0; i < 4; i++){
-    		curStates[i] = digitalRead(b_pins[i]);
-    	}
-
-    	for (short i = 0; i < 4; i++) {
-    	    if (curStates[i] and !lastStates[i]) {
-          		if (time - lastDebounceTime > debounceDelay) {
-        		    pressed = true;
-        		    pressed_ind = i;
-        		    lastDebounceTime = time;
-        		    break;  
-      	    }
-    	    }
-  	    }
-
-
-        for (short i = 0; i < 4; i++) {
-            lastStates[i] = curStates[i];
-        }
-
+        pressed_ind = buttons();
 
         if(pressed_ind==0 or pressed_ind==1){
               if(r==1 and pressed_ind==0){
@@ -83,6 +69,13 @@ String Type::type(){
                 //function buttons
                 if(c==8 and r==0){
                     typed.remove(typed.length()-1,1);
+                }
+
+                // byte
+                else if(c==6 and r==0 and typed.length()>=2){
+                    char temp = 16*char_to_hex(typed[typed.length()-2]) + char_to_hex(typed[typed.length()-1]);
+                    typed = typed.substring(0, typed.length() - 2);
+                    typed += temp;
                 }
 
                 else if(c==7 and r==1){

@@ -61,6 +61,17 @@ byte del[8] = {
   B00000
 };
 
+byte hx[8]{
+  B00000,
+  B00000,
+  B10111,
+  B10100,
+  B10111,
+  B10101,
+  B10101,
+  B10111
+};
+
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
@@ -72,6 +83,7 @@ void initDisplay() {
     lcd.createChar(2, big);
     lcd.createChar(3, small);
     lcd.createChar(4, del);
+    lcd.createChar(5, hx);
 }
 
 String nopref(String s){
@@ -98,6 +110,7 @@ void Print(String l1, String l2, bool row) {
         }else if (l1[i] == '/') {lcd.write(byte(2)); 
         }else if (l1[i] == '@') {lcd.write(byte(3));
         }else if (l1[i] == '{') {lcd.write(byte(4));
+        }else if (l1[i] == '~') {lcd.write(byte(5));
         }else {lcd.print(l1[i]);}
     }
 
