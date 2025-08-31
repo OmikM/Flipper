@@ -28,12 +28,6 @@ int buttons(){
   	delay(50);
 
 	unsigned long time = millis();
-	on_off = digitalRead(on_off_switch_p);
-
-	if(on_off == LOW){
-		Serial.println("off");
-		esp_light_sleep_start();
-	}
 
 	for(int i = 0; i < 4; i++){
 		curStates[i] = digitalRead(b_pins[i]);

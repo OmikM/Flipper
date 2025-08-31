@@ -6,7 +6,6 @@ int buttons();
 
 const int ledPin = 4;
 const int b_pins[4] = {36, 39, 34, 35};  // up, down, left, right
-//const int on_off_switch_p = 32;
 const unsigned long debounceDelay = 50;
 const int radio_rec_p = 5;
 const int radio_emi_p = 12;
@@ -30,6 +29,3 @@ extern bool curStates[4];
 extern char push;
 extern bool presed;
 
-
-extern bool on_off;
-const gpio_num_t on_off_switch_p = GPIO_NUM_32;

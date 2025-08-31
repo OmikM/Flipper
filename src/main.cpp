@@ -31,9 +31,6 @@ void setup(){
 		pinMode(b_pins[i], INPUT);
 	}
 
-	pinMode(on_off_switch_p, INPUT);
-	esp_err_t result = esp_sleep_enable_ext0_wakeup(on_off_switch_p, 1);
-
 	SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
 	for (int i = 0; i < 10; i++) {
 	    SPI.transfer(0xFF);
